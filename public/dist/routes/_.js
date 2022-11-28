@@ -1,0 +1,1 @@
+(()=>{console.log("pages/_.tsx",sauron);sauron("body",()=>{document.body.style.transition="background-color 1s";let o=0;setInterval(()=>{document.body.style.backgroundColor="hsl("+360*o/60+",80%,50%)",o++,o==60&&(o=0)},1e3)});})();
