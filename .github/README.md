@@ -1,6 +1,8 @@
-# esbuild-react-chrome-extension
+# browser-extensions-template-esbuild
 
-This is a boilerplate for chrome extensions writted in React and bundled with esbuild.
+React + esbuild
+크롬 (추후 파이어폭스 지원 예정) 확장 프로그램을 위한
+리액트 및 npm 패키지 사용을 위한 세팅이 되어 있는 템플릿입니다.
 
 ## Build
 
@@ -10,4 +12,4 @@ yarn build
 
 ## Scripts
 
-All scripts are bundled into the `public/build` folder.
+모든 스크립트는 `public/dist`에 저장됩니다.
