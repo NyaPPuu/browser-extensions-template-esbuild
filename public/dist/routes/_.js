@@ -1,1 +1,1 @@
-(()=>{console.log("pages/_.tsx",sauron);sauron("body",()=>{document.body.style.transition="background-color 1s";let o=0;setInterval(()=>{document.body.style.backgroundColor="hsl("+360*o/60+",80%,50%)",o++,o==60&&(o=0)},1e3)});})();
+(()=>{var e=chrome;console.log("routes/_.tsx",sauron);e.storage.sync.get(["rainbowBackground"],function(n){n.rainbowBackground&&sauron("body",()=>{document.body.style.transition="background-color 1s";let t=0;setInterval(()=>{document.body.style.backgroundColor="hsl("+360*t/60+",80%,50%)",t++,t==60&&(t=0)},1e3)})});})();

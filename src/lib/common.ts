@@ -1,130 +1,19 @@
-"use strict";
-if (typeof browser == "undefined" && typeof chrome !== "undefined") var browser = chrome;
 
-function sauron(selector: string | string[], callback: Function) {
-	let selector_list: string[] = [];
+/*
+크롬과 파이어폭스의 호환성을 위해 작업해둘 곳
+const app: typeof chrome | typeof browser = (typeof browser == "undefined" && typeof chrome !== "undefined") ? chrome : browser;
+*/
 
-	if (typeof callback !== "function") callback = () => {};
-	if (typeof selector === "string") selector_list = [selector];
-	else if (Array.isArray(selector)) selector_list = selector;
-	else return false;
+export default chrome;
+// export default app;
 
-	let list: { selector: string[]; callback: Function }[] = [];
-	list.push({
-		selector: selector_list,
-		callback: callback,
-	});
 
-	const observer_function = () => {
-		for (let o in list) {
-			let cnt = 0;
-			for (let s of list[o].selector) {
-				if (document.querySelectorAll(s).length) {
-					cnt++;
-				}
-			}
-			if (cnt == list[o].selector.length) {
-				list[o].callback();
-				list.splice(Number(o), 1);
-				break;
-			}
-		}
-	};
-	const observer = new MutationObserver(observer_function);
-	observer_function();
-	observer.observe(document, {
-		childList: true,
-		subtree: true,
-	});
-}
 
-function observe(
-	node: Node | null,
-	callback: Function,
-	options?: {
-		childList: boolean;
-		attributes: boolean;
-		characterData: boolean;
-		subtree: boolean;
-	}
-) {
-	if (!node) return;
-	var observer = new MutationObserver(() => {
-		callback();
-	});
-	callback();
-	if (typeof options === "undefined")
-		options = {
-			childList: true,
-			attributes: false,
-			characterData: false,
-			subtree: true,
-		};
-	observer.observe(node, options);
-}
-
-function delegate(targetNode: Node | null, eventList: string, handler: (event: Event) => unknown, selector?: string): void {
-	if (!targetNode) return;
-	if (typeof selector === "undefined") {
-		eventList.split(" ").forEach((eventName) => {
-			targetNode.addEventListener(eventName, (event) => { handler.call(event.target, event); }, false);
-		});
-	} else {
-		eventList.split(" ").forEach((event) => {
-			targetNode.addEventListener(
-				event,
-				(event) => {
-					let currentNode = event.target as HTMLElement;
-					while (currentNode && currentNode !== targetNode) {
-						if (currentNode.matches(selector)) {
-							handler.call(currentNode, event);
-						}
-						if (currentNode.parentNode) currentNode = currentNode.parentNode as HTMLElement;
-					}
-				},
-				false
-			);
-		});
-	}
-}
-
-function docReady(callback: Function) {
-
-    function completed() {
-        document.removeEventListener( "DOMContentLoaded", completed, false )
-        window.removeEventListener( "load", completed, false )
-        callback()
-    }
-
-    //Events.on(document, 'DOMContentLoaded', completed)
-
-    if ( document.readyState === "complete" ) {
-        // Handle it asynchronously to allow scripts the opportunity to delay ready
-        setTimeout( callback )
-
-    } else {
-
-        // Use the handy event callback
-        document.addEventListener( "DOMContentLoaded", completed, false );
-
-        // A fallback to window.onload, that will always work
-        window.addEventListener( "load", completed, false );
-    }
-}
-
-function injectScript(file: string, node: string) {
-	var th = document.getElementsByTagName(node)[0];
-	var s = document.createElement("script");
-	s.setAttribute("type", "text/javascript");
-	s.setAttribute("src", file);
-	th.appendChild(s);
-}
-
-function isUrlAbsolute(url: string) {
+export function isUrlAbsolute(url: string) {
 	return url.indexOf("//") === 0 ? true : url.indexOf("://") === -1 ? false : url.indexOf(".") === -1 ? false : url.indexOf("/") === -1 ? false : url.indexOf(":") > url.indexOf("/") ? false : url.indexOf("://") < url.indexOf(".") ? true : false;
 }
 
-const DateHelper = {
+export const DateHelper = {
 	/**
 	 * format
 	 * @param  {Date} target date object
@@ -386,6 +275,44 @@ const DateHelper = {
 	}
 };
 
-
-const page: any = new URL(location.toString());
-page.hashParams = new URLSearchParams(location.hash.substr(1));
+export function URLBaseName(url: string): string {
+	// return url.split(/[\\/]/).pop();
+	url = url.substring(0, (url.indexOf("#") == -1) ? url.length : url.indexOf("#"));
+	// this removes the query after the file name, if there is one
+	url = url.substring(0, (url.indexOf("?") == -1) ? url.length : url.indexOf("?"));
+	// this removes everything before the last slash in the url
+	url = url.substring(url.lastIndexOf("/") + 1, url.length);
+	return url;
+}
+// 파일명 + 확장자명으로 나눔
+export function splitFilename(fileName: string): string[] {
+	const p = fileName.match(/(.*?)(?:\.([^.]+))?$/);
+	return [p?.[1] || "", p?.[2] || ""];
+}
+// 파일명에 사용하지 못하는 특수문자 제거
+export function clearFilename(fileName: string): string {
+	return fileName.replace(/[\\:*?"<>|~/]/g, "");
+}
+// 파일 경로에 사용하지 못하는 특수문자 제거
+export function clearPath(path: string): string {
+	return path.replace(/[:*?"<>|~]/g, "");
+}
+export function readFileAsync(file: Blob) {
+	return new Promise<string>((resolve, reject) => {
+		const reader = new FileReader();
+		reader.onload = () => {
+			resolve(reader.result as string);
+		};
+		reader.onerror = reject;
+		reader.readAsDataURL(file);
+	});
+}
+export function getDomain(url: string): string {
+	return new URL(url).hostname.split(".").slice(-2).join(".");
+}
+export function matchRule(str: string, rule: string): boolean {
+	return new RegExp("^" + rule.split("*").join(".*") + "$").test(str);
+}
+export function pathBaseName(path: string): string {
+	return path.split(/[\\/]/).pop() || path;
+}

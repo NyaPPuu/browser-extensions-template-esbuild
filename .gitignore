@@ -1,8 +1,8 @@
 /node_modules
-/build
 /.vscode
 .eslintcache
 *.env
 *.local
 *.log
-/public/build
+
+folder.json

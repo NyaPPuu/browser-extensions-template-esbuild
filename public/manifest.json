@@ -1,42 +1,48 @@
 {
-  "manifest_version": 3,
+	"manifest_version": 3,
+	
+	"name": "browser extensions template esbuild",
+	"description": ">_<",
+	"version": "1.0",
+	
+	"icons": {
+		"16": "img/icon16.png",
+		"48": "img/icon48.png",
+		"128": "img/icon128.png"
+	},
 
-  "name": "browser-extensions-template-esbuild",
-  "version": "1.0",
+	"action": {
+		"default_icon": {
+			"16": "img/icon16.png",
+			"48": "img/icon48.png",
+			"128": "img/icon128.png"
+		},
+		"default_popup": "popup.html"
+	},
 
-  "icons": {
-    "192": "logo192.png",
-    "512": "logo512.png"
-  },
+	"options_page": "options.html",
+	
+	"background": {
+		"service_worker": "dist/background.js"
+	},
 
-  "action": {
-    "default_icon": {
-      "192": "logo192.png",
-      "512": "logo512.png"
-    }
-  },
+	"permissions": ["storage", "webNavigation", "scripting", "tabs", "downloads", "declarativeNetRequest", "declarativeNetRequestFeedback", "alarms"],
+	
+	"host_permissions": ["<all_urls>"],
 
-  "background": {
-    "service_worker": "dist/background.js"
-  },
-
-  "permissions": ["storage", "webNavigation", "scripting", "tabs", "downloads"],
-
-  "host_permissions": ["<all_urls>"],
-
-  "content_scripts": [
-    {
-        "run_at": "document_start",
-        "all_frames": false,
-        "matches": ["<all_urls>"],
-        "js": ["dist/inc/common.js", "dist/routes/_.js"]
-    }
-  ],
-
-  "web_accessible_resources": [
-    {
-      "resources": ["dist/lib/*", "dist/routes/*"],
-      "matches": ["<all_urls>"]
-    }
-  ]
+	"content_scripts": [
+		{
+			"run_at": "document_start",
+			"all_frames": false,
+			"matches": ["<all_urls>"],
+			"js": ["dist/pages.js", "dist/routes/_.js"]
+		}
+	],
+	
+	"web_accessible_resources": [
+		{
+			"resources": ["dist/pages.js", "dist/routes/*"],
+			"matches": ["<all_urls>"]
+		}
+	]
 }
