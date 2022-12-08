@@ -4,6 +4,13 @@
 const app: typeof chrome | typeof browser = (typeof browser == "undefined" && typeof chrome !== "undefined") ? chrome : browser;
 */
 
+import { CacheProvider, EmotionCache } from "@emotion/react";
+import { CssBaseline, ThemeProvider } from "@mui/material";
+import React from "react";
+import ReactDOM from "react-dom/client";
+import createCache from "@emotion/cache";
+import { theme } from "./theme";
+
 export default chrome;
 // export default app;
 
@@ -315,4 +322,41 @@ export function matchRule(str: string, rule: string): boolean {
 }
 export function pathBaseName(path: string): string {
 	return path.split(/[\\/]/).pop() || path;
+}
+
+
+export function renderShadow(root: Element | DocumentFragment, children: React.ReactNode) {
+
+	const cacheRoot = createCache({
+		key: "css",
+		prepend: true,
+		container: root,
+		// speedy: false,
+	});
+
+	const reactRoot = ReactDOM.createRoot(root);
+	reactRoot.render(
+		<React.StrictMode>
+			<CacheProvider value={cacheRoot}>
+				<CssBaseline />
+				{ children }
+			</CacheProvider>
+		</React.StrictMode>
+	);
+}
+
+export function render(children: React.ReactNode, cache: EmotionCache) {
+	const wrapper = document.createElement("span");
+	const reactRoot = ReactDOM.createRoot(wrapper);
+
+	reactRoot.render(
+		<React.StrictMode>
+			<CacheProvider value={cache}>
+				<ThemeProvider theme={theme}>
+					{ children }
+				</ThemeProvider>
+			</CacheProvider>
+		</React.StrictMode>
+	);
+	return wrapper;
 }
