@@ -4,7 +4,7 @@
 const app: typeof chrome | typeof browser = (typeof browser == "undefined" && typeof chrome !== "undefined") ? chrome : browser;
 */
 
-import { CacheProvider, EmotionCache } from "@emotion/react";
+import { CacheProvider } from "@emotion/react";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import React from "react";
 import ReactDOM from "react-dom/client";
