@@ -1,7 +1,6 @@
 import { Button } from "@mui/material";
 import React from "react";
 import app, { render } from "../lib/common";
-import {  useStyleCache } from "../lib/theme";
 
 console.log("routes/_.tsx", sauron);
 

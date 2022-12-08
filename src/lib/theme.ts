@@ -35,12 +35,4 @@ export const cache = function() {
 	});
 };
 
-export const useStyleCache = function() {
-	if (window.styleCache) return;
-	window.styleCache = createCache({
-		key: "css",
-		prepend: true,
-	});
-}
-
 export default theme;
