@@ -346,8 +346,13 @@ export function renderShadow(root: Element | DocumentFragment, children: React.R
 }
 
 export function render(children: React.ReactNode) {
+	if (!window.styleCache) {
+		window.styleCache = createCache({
+			key: "css",
+			prepend: true,
+		});
+	}
 	const wrapper = document.createElement("span");
-	if (!window.styleCache) return wrapper;
 	const reactRoot = ReactDOM.createRoot(wrapper);
 
 	reactRoot.render(

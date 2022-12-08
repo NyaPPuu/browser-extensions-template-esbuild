@@ -18,8 +18,6 @@ app.storage.sync.get(["rainbowBackground"], function(options: { [key: string]: a
 				}
 			}, 1000);
 
-			useStyleCache();
-
 			document.body.append(render(<Button variant="contained" onClick={() => { clearInterval(interval); }}>Wow! rainbow!</Button>));
 		});
 	}
