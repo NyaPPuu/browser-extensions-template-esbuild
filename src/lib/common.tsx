@@ -345,13 +345,14 @@ export function renderShadow(root: Element | DocumentFragment, children: React.R
 	);
 }
 
-export function render(children: React.ReactNode, cache: EmotionCache) {
+export function render(children: React.ReactNode) {
 	const wrapper = document.createElement("span");
+	if (!window.styleCache) return wrapper;
 	const reactRoot = ReactDOM.createRoot(wrapper);
 
 	reactRoot.render(
 		<React.StrictMode>
-			<CacheProvider value={cache}>
+			<CacheProvider value={window.styleCache}>
 				<ThemeProvider theme={theme}>
 					{ children }
 				</ThemeProvider>

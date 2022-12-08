@@ -1,5 +1,28 @@
 import { createTheme } from "@mui/material";
 import createCache from "@emotion/cache";
+import { EmotionCache } from "@emotion/react";
+
+/*
+let theme = createTheme({ palette: { mode: "dark" } });
+theme = createTheme(theme, {
+	palette: {
+		primary: { main: "#EEE", light: "#FFF", dark: "#BBB" },
+		mode: "dark",
+	},
+	shape: { borderRadius: 0 },
+	typography: {
+		small1: { ...theme.typography.body2, fontSize: "0.75rem" },
+		small2: { ...theme.typography.body2, fontSize: "0.688rem" },
+		small3: { ...theme.typography.body2, fontSize: "0.625rem" },
+	},
+});
+*/
+
+declare global {
+	interface Window {
+		styleCache?: EmotionCache;
+	}
+}
 
 export const theme = createTheme({
 	shape: { borderRadius: 0 }
@@ -7,6 +30,14 @@ export const theme = createTheme({
 
 export const cache = function() {
 	return createCache({
+		key: "css",
+		prepend: true,
+	});
+};
+
+export const useStyleCache = function() {
+	if (window.styleCache) return;
+	window.styleCache = createCache({
 		key: "css",
 		prepend: true,
 	});

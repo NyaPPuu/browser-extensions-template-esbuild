@@ -1,7 +1,7 @@
 import { Button } from "@mui/material";
 import React from "react";
 import app, { render } from "../lib/common";
-import { cache } from "../lib/theme";
+import {  useStyleCache } from "../lib/theme";
 
 console.log("routes/_.tsx", sauron);
 
@@ -18,7 +18,9 @@ app.storage.sync.get(["rainbowBackground"], function(options: { [key: string]: a
 				}
 			}, 1000);
 
-			document.body.append(render(<Button variant="contained" onClick={() => { clearInterval(interval); }}>Wow! rainbow!</Button>, cache()));
+			useStyleCache();
+
+			document.body.append(render(<Button variant="contained" onClick={() => { clearInterval(interval); }}>Wow! rainbow!</Button>));
 		});
 	}
 });
