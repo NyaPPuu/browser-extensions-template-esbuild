@@ -1,8 +1,8 @@
 import { Button } from "@mui/material";
 import React from "react";
-import app, { render } from "../lib/common";
+import { app, DEV, render } from "../lib/common";
 
-console.log("routes/_.tsx", sauron);
+DEV.log("page", page);
 
 app.storage.sync.get(["rainbowBackground"], function(options: { [key: string]: any }) {
 	if (options.rainbowBackground) {

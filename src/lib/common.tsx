@@ -11,9 +11,49 @@ import ReactDOM from "react-dom/client";
 import createCache from "@emotion/cache";
 import { theme } from "./theme";
 
-export default chrome;
+export const app = chrome;
+export default app;
 // export default app;
 
+// F58E86
+class DevHelper {
+	name = "";
+	enable = true;
+	prefixStyle = "";
+
+	constructor({ name, enable = true, prefixStyle }: { name?: string, enable?: boolean, prefixStyle?: string } = {}) {
+		if (name) this.name = name;
+		this.enable = enable;
+		if (prefixStyle) this.prefixStyle = prefixStyle;
+	}
+
+	prefix() {
+		const datetime = DateHelper.format(new Date(), "Y-m-d H:i:s.v");
+		const prefix: string[] = [];
+		if (this.name) {
+			if (this.prefixStyle) prefix.push(`${datetime} %c${this.name}`, this.prefixStyle);
+			else prefix.push(`${datetime} ${this.name}`);
+		}
+		return prefix;
+	}
+
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	log(...args: any) {
+		if (!this.enable) return;
+		console.log(...this.prefix(), ...args);
+	}
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	error(...args: any) {
+		if (!this.enable) return;
+		console.error(...this.prefix(), ...args);
+	}
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	info(...args: any) {
+		if (!this.enable) return;
+		console.info(...this.prefix(), ...args);
+	}
+}
+export const DEV = new DevHelper({ name: app.runtime.getManifest().name, prefixStyle: "background: #F58E86; color: white; font-size:11px; padding:1px 10px;", enable: process.env.NODE_ENV == "dev" });
 
 
 export function isUrlAbsolute(url: string) {
@@ -51,6 +91,7 @@ export const DateHelper = {
 	 *  z : The day of the year (starting from 0)
 	 *  t : Number of days in the given month
 	 *  L : Whether it's a leap year
+	 *  v : Milliseconds
 	 *  Escape character is #. Example: DateFormatter.format(new Date(), "#Y#m#d #i#s Ymd");
 	 * @return {String} formatted date
 	 */
@@ -62,6 +103,7 @@ export const DateHelper = {
 		const dHours = d.getHours();
 		const dMinutes = d.getMinutes();
 		const dSeconds = d.getSeconds();
+		const dMilliSeconds = d.getMilliseconds();
 		let res = "";
 		for (let i = 0, len = pattern.length; i < len; i++) {
 			const c = pattern.charAt(i);
@@ -147,6 +189,9 @@ export const DateHelper = {
 					break;
 				case "S":
 					res += this.dateSuffix[dDate - 1];
+					break;
+				case "v":
+					res += dMilliSeconds;
 					break;
 				default:
 					res += c;
