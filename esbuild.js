@@ -6,9 +6,42 @@ const srcDir = path.join(__dirname, "src");
 const fs = require("fs");
 
 
+class EntryPointHelper {
+	root = "";
+	entryPoints = [];
+
+	constructor(root = "") {
+		this.root = root;
+	}
+
+	add(...pathString) {
+		if (Array.isArray(pathString)) {
+			pathString.map(this._add);
+		} else {
+			this._add(pathString);
+		}
+	}
+	_add(pathString) {
+		if (!fs.existsSync(pathString)) return;
+		if (fs.lstatSync(pathString).isDirectory()) {
+			fs.readdirSync(path.join(this.root, pathString)).forEach(function(file) {
+				this.entryPoints.push(path.join(this.root, pathString, file));
+			});
+		} else {
+			entryPoints.push(path.join(this.root, pathString));
+		}
+	}
+
+	list() {
+		return this.entryPoints;
+	}
+}
+
+const entryInc = new EntryPointHelper(srcDir);
+entryInc.add("pages.ts", "plugins");
 esbuild
 	.build({
-		entryPoints: [path.join(srcDir, "pages.ts")],
+		entryPoints: entryInc.list(),
 		bundle: false,
 		minify: process.env.NODE_ENV != "dev",
 		watch:
@@ -28,20 +61,12 @@ esbuild
 	})
 	.catch(() => process.exit(1));
 
-const entryPoints = [path.join(srcDir, "background.ts"), path.join(srcDir, "options.tsx"), path.join(srcDir, "popup.tsx")];
-fs.readdirSync(path.join(srcDir, "routes")).forEach(function(file) {
-	if (file.match(/.*\.tsx?$/))
-		entryPoints.push(path.join(srcDir, "routes", file));
-});
-fs.readdirSync(path.join(srcDir, "lib")).forEach(function(file) {
-	if (file.match(/.*\.(tsx?|css)$/))
-		entryPoints.push(path.join(srcDir, "lib", file));
-});
-
+const entry = new EntryPointHelper(srcDir);
+entry.add("background.ts", "options.ts", "popup.ts", "routes", "lib", "plugins");
 esbuild
 	.build({
 	// format: "cjs",
-		entryPoints,
+		entryPoints: entry.list(),
 		bundle: true,
 		minify: process.env.NODE_ENV != "dev",
 		watch:
