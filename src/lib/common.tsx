@@ -53,7 +53,7 @@ class DevHelper {
 		console.info(...this.prefix(), ...args);
 	}
 }
-export const DEV = new DevHelper({ name: app.runtime.getManifest().name, prefixStyle: "background: #F58E86; color: white; font-size:11px; padding:1px 10px;", enable: process.env.NODE_ENV == "dev" });
+export const DEV = new DevHelper({ name: app.runtime.getManifest().name, prefixStyle: "background: #F58E86; color: white; font-size: 11px; padding: 1px 10px;", enable: process.env.NODE_ENV == "dev" });
 
 
 export function isUrlAbsolute(url: string) {
