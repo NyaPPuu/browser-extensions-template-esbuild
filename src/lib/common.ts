@@ -4,13 +4,6 @@
 const app: typeof chrome | typeof browser = (typeof browser == "undefined" && typeof chrome !== "undefined") ? chrome : browser;
 */
 
-import { CacheProvider } from "@emotion/react";
-import { CssBaseline, ThemeProvider } from "@mui/material";
-import React from "react";
-import ReactDOM from "react-dom/client";
-import createCache from "@emotion/cache";
-import { theme } from "./theme";
-
 export const app = chrome;
 export default app;
 // export default app;
@@ -43,6 +36,11 @@ class DevHelper {
 		console.log(...this.prefix(), ...args);
 	}
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	warn(...args: any) {
+		if (!this.enable) return;
+		console.warn(...this.prefix(), ...args);
+	}
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	error(...args: any) {
 		if (!this.enable) return;
 		console.error(...this.prefix(), ...args);
@@ -53,7 +51,7 @@ class DevHelper {
 		console.info(...this.prefix(), ...args);
 	}
 }
-export const DEV = new DevHelper({ name: app.runtime.getManifest().name, prefixStyle: "background: #F58E86; color: white; font-size: 11px; padding: 1px 10px;", enable: process.env.NODE_ENV == "dev" });
+export const DEV = new DevHelper({ name: app.runtime.getManifest().name, prefixStyle: "background: #908eba; color: white; font-size: 11px; padding: 1px 10px;", enable: process.env.NODE_ENV == "dev" });
 
 
 export function isUrlAbsolute(url: string) {
@@ -370,44 +368,3 @@ export function pathBaseName(path: string): string {
 }
 
 
-export function renderShadow(root: Element | DocumentFragment, children: React.ReactNode) {
-
-	const cacheRoot = createCache({
-		key: "css",
-		prepend: true,
-		container: root,
-		// speedy: false,
-	});
-
-	const reactRoot = ReactDOM.createRoot(root);
-	reactRoot.render(
-		<React.StrictMode>
-			<CacheProvider value={cacheRoot}>
-				<CssBaseline />
-				{ children }
-			</CacheProvider>
-		</React.StrictMode>
-	);
-}
-
-export function render(children: React.ReactNode) {
-	if (!window.styleCache) {
-		window.styleCache = createCache({
-			key: "css",
-			prepend: true,
-		});
-	}
-	const wrapper = document.createElement("span");
-	const reactRoot = ReactDOM.createRoot(wrapper);
-
-	reactRoot.render(
-		<React.StrictMode>
-			<CacheProvider value={window.styleCache}>
-				<ThemeProvider theme={theme}>
-					{ children }
-				</ThemeProvider>
-			</CacheProvider>
-		</React.StrictMode>
-	);
-	return wrapper;
-}

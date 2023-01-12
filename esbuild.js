@@ -6,9 +6,43 @@ const srcDir = path.join(__dirname, "src");
 const fs = require("fs");
 
 
+class EntryPointHelper {
+	root = "";
+	entryPoints = [];
+
+	constructor(root = "") {
+		this.root = root;
+	}
+
+	add(...pathString) {
+		if (Array.isArray(pathString)) {
+			pathString.map((p) => { this._add(p) });
+		} else {
+			this._add(pathString);
+		}
+	}
+	_add(pathString) {
+		const fullPath = path.join(this.root, pathString);
+		if (!fs.existsSync(fullPath)) return;
+		if (fs.lstatSync(fullPath).isDirectory()) {
+			fs.readdirSync(fullPath).forEach((file) => {
+				this.entryPoints.push(path.join(fullPath, file));
+			});
+		} else {
+			this.entryPoints.push(fullPath);
+		}
+	}
+
+	list() {
+		return this.entryPoints;
+	}
+}
+
+const entryInc = new EntryPointHelper(srcDir);
+entryInc.add("pages.ts", "plugins");
 esbuild
 	.build({
-		entryPoints: [path.join(srcDir, "pages.ts")],
+		entryPoints: entryInc.list(),
 		bundle: false,
 		minify: process.env.NODE_ENV != "dev",
 		watch:
@@ -21,6 +55,7 @@ esbuild
 				}
 				: false,
 		target: ["chrome107", "firefox57"],
+		outbase: "./src",
 		outdir: "./public/dist",
 		define: {
 			"process.env.NODE_ENV": `"${process.env.NODE_ENV}"`
@@ -28,20 +63,12 @@ esbuild
 	})
 	.catch(() => process.exit(1));
 
-const entryPoints = [path.join(srcDir, "background.ts"), path.join(srcDir, "options.tsx"), path.join(srcDir, "popup.tsx")];
-fs.readdirSync(path.join(srcDir, "routes")).forEach(function(file) {
-	if (file.match(/.*\.tsx?$/))
-		entryPoints.push(path.join(srcDir, "routes", file));
-});
-fs.readdirSync(path.join(srcDir, "lib")).forEach(function(file) {
-	if (file.match(/.*\.(tsx?|css)$/))
-		entryPoints.push(path.join(srcDir, "lib", file));
-});
-
+const entry = new EntryPointHelper(srcDir);
+entry.add("background.ts", "options.tsx", "popup.tsx", "routes");
 esbuild
 	.build({
 	// format: "cjs",
-		entryPoints,
+		entryPoints: entry.list(),
 		bundle: true,
 		minify: process.env.NODE_ENV != "dev",
 		watch:
@@ -54,6 +81,7 @@ esbuild
 				}
 				: false,
 		target: ["chrome107", "firefox57"],
+		outbase: "./src",
 		outdir: "./public/dist",
 		define: {
 			"process.env.NODE_ENV": `"${process.env.NODE_ENV}"`

@@ -1,6 +1,7 @@
 import { Button } from "@mui/material";
 import React from "react";
-import { app, DEV, render } from "../lib/common";
+import { app, DEV } from "../lib/common";
+import { render } from "../lib/renderer";
 
 DEV.log("page", page);
 
