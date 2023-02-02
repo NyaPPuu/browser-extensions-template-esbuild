@@ -119,6 +119,12 @@ function injectScript(file: string, node: string) {
 	th.appendChild(s);
 }
 
+async function main(callback: () => void) {
+	if (document.contentType.startsWith("text/") || document.contentType.startsWith("image/")) {
+		callback();
+	}
+}
+
 
 
 interface Page extends URL {
