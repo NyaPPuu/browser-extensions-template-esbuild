@@ -1,14 +1,17 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { createTheme, TextField, ThemeProvider, CssBaseline, Container, Toolbar, Typography, Button, IconButton, Snackbar, Alert, AlertColor, Switch } from "@mui/material";
+import { createTheme, TextField, ThemeProvider, CssBaseline, Container, Toolbar, Typography, Button, IconButton, Snackbar, Alert, AlertColor, Switch, Box } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import app from "./lib/common";
 import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
 
-interface OptionsForm {
+export interface OptionsType {
 	[key: string]: unknown;
 	"rainbowBackground": boolean;
 }
+export const defaultOptions: OptionsType = {
+	"rainbowBackground": true
+};
 
 function OptionRow(props: React.PropsWithChildren<{ subject: React.ReactNode }>) {
 	return (
@@ -32,9 +35,7 @@ function OptionHeading(props: { subject: React.ReactNode; }) {
 
 export default function App() {
 
-	const [form, setForm] = React.useState<OptionsForm>({
-		"rainbowBackground": true
-	});
+	const [form, setForm] = React.useState<OptionsForm>(defaultOptions);
 	const [snackPack, setSnackPack] = React.useState<{ message?: string; type: AlertColor; open: boolean; }>({
 		type: "success",
 		open: false
@@ -77,6 +78,7 @@ export default function App() {
 	};
 
 	React.useEffect(() => {
+		document.title = chrome.runtime.getManifest().name;
 		app.storage.sync.get(null, function(result) {
 			setForm({ ...form, ...result });
 		});
@@ -85,16 +87,15 @@ export default function App() {
 	return (
 		<>
 			<Toolbar sx={{ borderBottom: 1, borderColor: "divider", marginBottom: 3 }}>
-				<Typography
-					component="h2"
-					variant="h5"
-					color="inherit"
-					align="center"
-					noWrap
-					sx={{ flex: 1 }}
-				>
-					Options
-				</Typography>
+				<Box sx={{ flex: 1, textAlign: "center", whiteSpace: "nowrap" }}>
+					<Typography
+						component="span"
+						variant="h5"
+						color="inherit"
+						mr={1}
+					>{chrome.runtime.getManifest().name}</Typography>
+					<Typography variant="caption">v{chrome.runtime.getManifest().version}</Typography>
+				</Box>
 				<Button variant="contained" size="small" onClick={handleClickSave}>
 					Save
 				</Button>
